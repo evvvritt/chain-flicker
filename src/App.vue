@@ -1,10 +1,9 @@
 <template lang="pug">
   #app
-    #screen(:style="'background-color:' + this.mainColor")
+    #screen(@click="play = !play", :style="'background-color:' + this.mainColor")
     nav
-      button(aria-label="play", :style="'background-color:' + this.colorSet[3]")
-      button(aria-label="speed", :style="'background-color:' + this.colorSet[2]")
-      button(aria-label="add", :style="'background-color:' + this.colorSet[1]")
+      button(@click="play = !play")
+      button
 </template>
 
 <script>
@@ -13,21 +12,37 @@ export default {
   name: 'app',
   data () {
     return {
-      frames: ['FF6A6A', '0E1A81', '26554E', '000000', '0000000', '5D385F'],
+      frames: [],
       index: 0,
-      framesPerSec: 4
+      framesPerSec: 4,
+      interval: null,
+      play: false,
+      loop: true
     }
   },
   computed: {
-    interval () {
+    speed () {
       return Math.floor(1000 / this.framesPerSec)
     },
     mainColor () {
-      return '#' + this.frames[this.index]
+      return this.frames[this.index]
     },
     colorSet () {
       const colors = tinycolor(this.mainColor).tetrad()
       return colors.map((t) => { return t.toHexString() })
+    }
+  },
+  watch: {
+    play (play) {
+      if (!play) return clearInterval(this.interval)
+      this.interval = setInterval(() => {
+        this.index = this.index + 1 === this.frames.length ? 0 : this.index + 1
+      }, this.speed)
+    }
+  },
+  created () {
+    for (var i = 0; i < 20; i++) {
+      this.frames.push(tinycolor.random().toHexString())
     }
   }
 }
@@ -59,14 +74,20 @@ html{
     display:flex;
     align-items: stretch;
     height:100%;
-    mix-blend-mode:hard-light;
+    mix-blend-mode:difference;
     transition:max-height 500ms;
-    max-height:5vh;
+    max-height:1.5rem;
     &:hover{
-      max-height:7vh;
+      max-height:2rem;
     }
     button{
       flex:1;
+      &:nth-child(odd){
+        background-color:#ccc;
+      }
+      &:nth-child(even){
+        background-color:#666;
+      }
     }
   }
 }
