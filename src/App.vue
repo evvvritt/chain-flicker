@@ -1,13 +1,18 @@
 <template lang="pug">
   #app
-    #screen(@click="play = !play", :style="'background-color:' + this.activeColor")
-    button(v-show="!play", @click="addMode = !addMode", :style="'background-color:' + this.colorSet[3]", :class="{'addmode--close': addMode}")
+    #screen.is-overlay(@click="play = !play", :style="'background-color:' + activeColor")
+    add-color(v-show="addMode", :lastColor="activeColor")
+    button(v-show="!play", @click="addMode = !addMode", :style="'background-color:' + colorSet[3]", :class="{'addmode--close': addMode}")
 </template>
 
 <script>
 import tinycolor from 'tinycolor2'
+import AddColor from '@/components/AddColor'
 export default {
   name: 'app',
+  components: {
+    AddColor
+  },
   data () {
     return {
       frames: [],
@@ -47,13 +52,23 @@ export default {
 </script>
 
 <style lang="scss">
+*{
+  margin:0;
+  padding:0; 
+  box-sizing:border-box;
+}
 html{
-  background:#666;
+  background:black; // #666;
 }
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  
+  .is-overlay{
+    top:0; left:0;
+    width:100%; height:100%;
+  }
 
   button{
     appearance:none;
@@ -95,12 +110,8 @@ html{
       height:3em;
     }
   }
-}
-#screen{
-  position: fixed;
-  width:100%; height:100%;
-  top:0; left:0;
-  z-index:0;
-  cursor: pointer;
+  #screen{
+    position: fixed;
+  }
 }
 </style>

@@ -16,6 +16,7 @@
   "dependencies": {
     "tinycolor2": "^1.4.1",
     "vue": "^2.5.2",
+    "vue-color": "^2.4.3",
     "vue-router": "^3.0.1"
   },
   "devDependencies": {
