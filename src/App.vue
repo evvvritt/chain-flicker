@@ -1,8 +1,7 @@
 <template lang="pug">
   #app
-    #screen.is-overlay(@click="play = !play", :style="'background-color:' + activeColor")
-    add-color(v-show="addMode", :lastColor="activeColor")
-    button(v-show="!play", @click="addMode = !addMode", :style="'background-color:' + colorSet[3]", :class="{'addmode--close': addMode}")
+    router-view(:activeColor="activeColor", :lastColor="lastColor", @play="play = !play")
+    button#add-color-btn.button(v-show="!play", @click="addMode", :style="'background-color:' + colorSet[3]", :class="{'add-color-btn--back': $route.name === 'Add'}")
 </template>
 
 <script>
@@ -17,10 +16,9 @@ export default {
     return {
       frames: [],
       index: 0,
-      framesPerSec: 4,
+      framesPerSec: 8,
       interval: null,
-      play: false,
-      addMode: false
+      play: false
     }
   },
   computed: {
@@ -28,7 +26,10 @@ export default {
       return Math.floor(1000 / this.framesPerSec)
     },
     activeColor () {
-      return this.addMode ? this.frames[this.frames.length - 1] : this.frames[this.index]
+      return this.frames[this.index]
+    },
+    lastColor () {
+      return this.frames[this.frames.length - 1]
     },
     colorSet () {
       const colors = tinycolor(this.activeColor).tetrad()
@@ -39,31 +40,47 @@ export default {
     play (play) {
       if (!play) return clearInterval(this.interval)
       this.interval = setInterval(() => {
-        this.index = this.index + 1 === this.frames.length ? 0 : this.index + 1
+        this.index = this.index - 1 < 0 ? this.frames.length - 1 : this.index - 1
       }, this.speed)
+    },
+    '$route' (to, from) {
+      if (to.name === 'Add') this.resetIndex()
+    }
+  },
+  methods: {
+    addMode () {
+      if (this.$route.name === 'Add') return this.$router.go(-1)
+      return this.$router.push({name: 'Add'})
+    },
+    resetIndex () {
+      this.index = this.frames.length - 1
     }
   },
   created () {
     for (var i = 0; i < 20; i++) {
       this.frames.push(tinycolor.random().toHexString())
     }
+    this.resetIndex()
   }
 }
 </script>
 
 <style lang="scss">
+$frameWidth: 7vh;
 *{
   margin:0;
   padding:0; 
   box-sizing:border-box;
 }
 html{
-  background:black; // #666;
+  background:#1E1E1E;
 }
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  width:100%; height:100vh;
+  position: relative;
   
   .is-overlay{
     top:0; left:0;
@@ -80,12 +97,8 @@ html{
     }
   }
 
-  > button{
-    position: fixed;
-    bottom:3rem; right:3rem;
+  .button{
     width:5em; height:5em;
-    background:#666;
-    display: block;
     padding:0;
     border-radius:4rem;
     box-shadow:0 2px 4px rgba(0,0,0,.25);
@@ -94,11 +107,6 @@ html{
     align-items: center;
     transition:all 300ms;
     transform-origin:center center;
-    &.addmode--close{
-      transform:rotate(-135deg);
-      background-color:transparent !important;
-      box-shadow:none;
-    }
     &:after{
       content:'';
       display:block;
@@ -110,8 +118,25 @@ html{
       height:3em;
     }
   }
-  #screen{
+
+  #add-color-btn{
     position: fixed;
+    bottom:calc(#{$frameWidth} + 1.5rem); right:calc(#{$frameWidth} + 1.5rem);
+    
+    &.add-color-btn--back{
+      transform:rotate(-135deg);
+      background-color:transparent !important;
+      box-shadow:none;
+    }
+    
+  }
+
+  .screen{
+    position: absolute;
+    top:$frameWidth; left:$frameWidth;
+    width:calc(100% - #{$frameWidth} * 2) ; height:calc(100% - #{$frameWidth} * 2);
+    border-radius:$frameWidth;
+    overflow:scroll;
   }
 }
 </style>

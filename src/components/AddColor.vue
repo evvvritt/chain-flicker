@@ -1,15 +1,19 @@
 <template lang="pug">
-  #add-color.is-overlay
+  .screen
     section
-      div
+      div(:style="'background-color:' + lastColor")
       div(:style="'background-color:' + previewColor")
     nav
-      button(v-for="color in analogous", :style="'background-color:' + color", @click="previewColor = color")
-      button(v-for="color in tetrad", :style="'background-color:' + color", @click="previewColor = color")
-      button(style="background-color:white", @click="previewColor = 'white'")
-      button(style="background-color:gray", @click="previewColor = 'gray'")
-      button(style="background-color:black", @click="previewColor = 'black'")
-      button
+      div
+        button(style="background-color:black", @click="previewColor = 'black'")
+        button(style="background-color:gray", @click="previewColor = 'gray'")
+        button(style="background-color:white", @click="previewColor = 'white'")
+      div
+        button(v-for="color in analogous", :style="'background-color:' + color", @click="previewColor = color")
+      div
+        button(v-for="color in tetrad", :style="'background-color:' + color", @click="previewColor = color")
+      div
+        button
     picker(v-show="pickerVisible", :value="colors", :disableAlpha="true", @input="update")
 </template>
 
@@ -56,8 +60,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-#add-color{
-  position: fixed;
+.screen{
+  // position: fixed;
   display: flex;
   align-items: stretch;
   > section, 
@@ -72,17 +76,16 @@ export default {
     }
   }
   > nav{
-    background:yellow;
+    background:white;
     display: flex;
-    flex-wrap:wrap;
-    align-items: flex-start;
-    > * {
-      width:33%;
-      &:after{
-        content:'';
-        display: block;
-        padding-bottom:100%;
-      }
+    flex-direction:column;
+    > div{
+      flex: 1;
+      display: flex;
+      align-items: stretch;
+    }
+    button{
+      width:calc(100% / 3);
     }
   }
 }
