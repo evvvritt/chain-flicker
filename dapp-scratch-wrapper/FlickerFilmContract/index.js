@@ -16,7 +16,7 @@ class FlickerFilmContract {
     this.unlocked = false
     this.balanceWei = 0
     this.balance = 0
-    this.address = '0x345ca3e014aaf5dca488057592ee47305d9b3e10'
+    this.address = '0x82EdCB95F8b3C2906101AdbbdB4c61934F47fdF0'
     this.genesisBlock = 0
     this.loading = false
     this.options = {
@@ -43,7 +43,6 @@ class FlickerFilmContract {
 
       let web3Provider = false
       let idManager = new IdManagerProvider({
-        rpcUrl: 'http://localhost:9545',
         skipSecurity: true
       })
 

@@ -61,7 +61,7 @@ export default {
     play (play) {
       if (!play) return clearInterval(this.interval)
       this.interval = setInterval(() => {
-        this.index = this.index + 1 < 0 ? this.frames.length - 1 : this.index - 1
+        this.index = this.index + 1 === this.frames.length ? 0 : this.index + 1
       }, this.speed)
     },
     frames () {
@@ -98,7 +98,7 @@ export default {
       const code = this.encodeColor(color, length)
       if (code) {
         return filmContract.addColor(code).then(() => {
-          return setTimeout(() => this.getFilm(), process.env.CALL_DELAY)
+          return setTimeout(() => this.getFilm(), 0) // process.env.CALL_DELAY)
         })
       }
     },

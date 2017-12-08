@@ -68,6 +68,7 @@ export default {
   }
 }
 .preview{
+  cursor: pointer;
   display: flex;
   flex-direction:column;
   > div{
