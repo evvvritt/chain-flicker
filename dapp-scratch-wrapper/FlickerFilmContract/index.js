@@ -174,7 +174,7 @@ class FlickerFilmContract {
   getColor (index) {
     return this.FlickerFilmContract.methods.getColor(new BN(index, 10)).call()
       .then((resp) => {
-      console.log(resp)
+      // console.log(resp)
       return resp
     }).catch((err) => {
       console.error(err)
@@ -183,16 +183,7 @@ class FlickerFilmContract {
   getCount () {
     return this.FlickerFilmContract.methods.getCount().call()
       .then((resp) => {
-      console.log(resp)
-      return resp
-    }).catch((err) => {
-      console.error(err)
-    })
-  }
-  colors () {
-    return this.FlickerFilmContract.methods.colors(new BN(, 10)).call()
-      .then((resp) => {
-      console.log(resp)
+      // console.log(resp)
       return resp
     }).catch((err) => {
       console.error(err)

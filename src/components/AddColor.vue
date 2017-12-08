@@ -2,7 +2,7 @@
   .screen
     .preview
       div(:style="'background-color:' + activeColor", @click="previewColor = activeColor")
-      div(:style="'background-color:' + previewColor")
+      div.preview-color(:style="'background-color:' + previewColor", @click="$emit('addColor', previewColor, 1)")
     nav.palette
       div
         button(style="background-color:black", @click="previewColor = 'black'")
@@ -16,7 +16,7 @@
         button.icon-eyedropper(@click="pickerVisible = !pickerVisible")
       .picker-outer.is-overlay(v-show="pickerVisible")
         .is-overlay(@click="pickerVisible = false")
-        picker(:value="colors", :disableAlpha="true", @input="update")
+        picker(:value="{hex: previewColor}", :disableAlpha="true", @input="update")
 </template>
 
 <script>
@@ -30,25 +30,22 @@ export default {
   },
   data () {
     return {
-      previewColor: 'transparent',
-      pickerVisible: false,
-      tinycolor: tinycolor
+      defaultColor: tinycolor.random().toHexString(),
+      previewColor: this.activeColor,
+      pickerVisible: false
     }
   },
   computed: {
-    colors () {
-      return {
-        hex: this.activeColor
-      }
-    },
     analogous () {
-      const colors = tinycolor(this.activeColor).analogous(5, 30)
+      const color = !this.activeColor ? this.defaultColor : this.activeColor
+      const colors = tinycolor(color).analogous(5, 30)
       colors.shift()
       colors.splice(2, 1)
       return colors.map((color) => color.toHexString())
     },
     tetrad () {
-      const colors = tinycolor(this.activeColor).tetrad()
+      const color = !this.activeColor ? this.defaultColor : this.activeColor
+      const colors = tinycolor(color).tetrad()
       colors.shift()
       return colors.map((color) => color.toHexString())
     }
@@ -110,6 +107,22 @@ export default {
     background-repeat:no-repeat;
     width:6vmax;
     height:6vmax;
+  }
+}
+.preview-color{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  &:after{
+    content:'';
+    display: block;
+    background-image:url('../assets/big-plus.svg');
+    background-size:contain;
+    background-position:center center;
+    background-repeat:no-repeat;
+    width:8vmax;
+    height:8vmax;
+    mix-blend-mode:difference;
   }
 }
 
