@@ -64,6 +64,7 @@ export default {
 <style lang="scss" scoped>
 .screen{
   display: flex;
+  overflow:hidden;
   align-items: stretch;
   > * {
     flex: 1;

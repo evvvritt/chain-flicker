@@ -141,7 +141,6 @@ html{
 
   .screen{
     position: absolute;
-    overflow:scroll;
     @include screen($frameWidth);
     border-radius:3rem;
   }
