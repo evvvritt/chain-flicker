@@ -1,9 +1,9 @@
 <template lang="pug">
   .screen
-    section
-      div(:style="'background-color:' + lastColor")
+    .preview
+      div(:style="'background-color:' + activeColor", @click="previewColor = activeColor")
       div(:style="'background-color:' + previewColor")
-    nav
+    nav.palette
       div
         button(style="background-color:black", @click="previewColor = 'black'")
         button(style="background-color:gray", @click="previewColor = 'gray'")
@@ -13,8 +13,10 @@
       div
         button(v-for="color in tetrad", :style="'background-color:' + color", @click="previewColor = color")
       div
-        button
-    picker(v-show="pickerVisible", :value="colors", :disableAlpha="true", @input="update")
+        button(@click="pickerVisible = !pickerVisible")
+      .picker-outer.is-overlay(v-show="pickerVisible")
+        .is-overlay(@click="pickerVisible = false")
+        picker(:value="colors", :disableAlpha="true", @input="update")
 </template>
 
 <script>
@@ -22,7 +24,7 @@ import tinycolor from 'tinycolor2'
 import { Sketch } from 'vue-color'
 export default {
   name: 'AddColor',
-  props: ['lastColor'],
+  props: ['activeColor'],
   components: {
     'picker': Sketch
   },
@@ -36,17 +38,17 @@ export default {
   computed: {
     colors () {
       return {
-        hex: this.lastColor
+        hex: this.activeColor
       }
     },
     analogous () {
-      const colors = tinycolor(this.lastColor).analogous(5, 30)
+      const colors = tinycolor(this.activeColor).analogous(5, 30)
       colors.shift()
       colors.splice(2, 1)
       return colors.map((color) => color.toHexString())
     },
     tetrad () {
-      const colors = tinycolor(this.lastColor).tetrad()
+      const colors = tinycolor(this.activeColor).tetrad()
       colors.shift()
       return colors.map((color) => color.toHexString())
     }
@@ -61,21 +63,20 @@ export default {
 
 <style lang="scss" scoped>
 .screen{
-  // position: fixed;
   display: flex;
   align-items: stretch;
-  > section, 
-  > nav{
+  > * {
     flex: 1;
   }
-  > section{
+  .preview{
     display: flex;
     flex-direction:column;
     > div{
       flex:1;
     }
   }
-  > nav{
+  .palette{
+    position: relative;
     background:white;
     display: flex;
     flex-direction:column;
@@ -86,6 +87,21 @@ export default {
     }
     button{
       width:calc(100% / 3);
+    }
+    .picker-outer{
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background:rgba(0,0,0,.5);
+    }
+  }
+
+  @media (max-width:480px) {
+    .preview{
+      flex:1 0 25%;
+    }
+    .palette{
+      flex:1 0 75%;
     }
   }
 }

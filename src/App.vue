@@ -1,6 +1,6 @@
 <template lang="pug">
   #app
-    router-view(:activeColor="activeColor", :lastColor="lastColor", @play="play = !play")
+    router-view(:activeColor="activeColor", @play="play = !play")
     button#add-color-btn.button(v-show="!play", @click="addMode", :style="'background-color:' + colorSet[3]", :class="{'add-color-btn--back': $route.name === 'Add'}")
 </template>
 
@@ -42,9 +42,6 @@ export default {
       this.interval = setInterval(() => {
         this.index = this.index - 1 < 0 ? this.frames.length - 1 : this.index - 1
       }, this.speed)
-    },
-    '$route' (to, from) {
-      if (to.name === 'Add') this.resetIndex()
     }
   },
   methods: {
@@ -67,6 +64,16 @@ export default {
 
 <style lang="scss">
 $frameWidth: 7vh;
+$frameWidthPortrait: 7vw;
+@mixin screen ($fw) {
+  top:$fw; left:$fw;
+  width:calc(100% - #{$fw} * 2) ; height:calc(100% - #{$fw} * 2);
+}
+@mixin btnPos ($fw) {
+  bottom:calc(#{$fw} + 1.5rem); 
+  right:calc(#{$fw} + 1.5rem);
+}
+
 *{
   margin:0;
   padding:0; 
@@ -83,6 +90,7 @@ html{
   position: relative;
   
   .is-overlay{
+    position: absolute;
     top:0; left:0;
     width:100%; height:100%;
   }
@@ -121,7 +129,7 @@ html{
 
   #add-color-btn{
     position: fixed;
-    bottom:calc(#{$frameWidth} + 1.5rem); right:calc(#{$frameWidth} + 1.5rem);
+    @include btnPos($frameWidth);
     
     &.add-color-btn--back{
       transform:rotate(-135deg);
@@ -133,10 +141,18 @@ html{
 
   .screen{
     position: absolute;
-    top:$frameWidth; left:$frameWidth;
-    width:calc(100% - #{$frameWidth} * 2) ; height:calc(100% - #{$frameWidth} * 2);
-    border-radius:$frameWidth;
     overflow:scroll;
+    @include screen($frameWidth);
+    border-radius:3rem;
+  }
+
+  @media (orientation:portrait) {
+    .screen{
+      @include screen($frameWidthPortrait);
+    }
+    #add-color-btn{
+      @include btnPos($frameWidthPortrait);
+    }
   }
 }
 </style>
