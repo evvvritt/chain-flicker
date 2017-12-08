@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="22px" height="24px" viewBox="0 0 22 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 47.1 (45422) - http://www.bohemiancoding.com/sketch -->
+    <title>Eyedropper</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Eyedropper" fill-rule="nonzero" fill="#000000">
+            <g id="iconmonstr-eyedropper-1">
+                <path d="M16.542,13.147 L9.087,6.48 L10.421,4.99 C11.243,5.726 12.508,5.656 13.243,4.831 L16.746,1 C17.339,0.337 18.16,4.4408921e-16 18.984,4.4408921e-16 C20.65,4.4408921e-16 22,1.358 22,2.996 C22,3.719 21.729,4.431 21.22,5.001 L17.717,8.831 C16.982,9.655 17.051,10.918 17.875,11.656 L16.542,13.147 Z M12.228,11.972 L4.437,20.622 C4.123,20.974 3.115,20.945 2.584,21.179 C2.756,20.625 2.632,19.641 2.946,19.289 L10.737,10.638 L9.246,9.305 L1.346,18.099 C0.069,19.522 1.175,20.36 0.197,22.151 C0.062,22.395 1.77635684e-15,22.631 1.77635684e-15,22.849 C1.77635684e-15,23.51 0.54,24 1.141,24 C1.382,24 1.633,23.921 1.865,23.744 C3.598,22.412 4.509,23.56 5.819,22.097 L13.719,13.305 L12.228,11.972 L12.228,11.972 Z" id="Shape"></path>
+            </g>
+        </g>
+    </g>
+</svg>

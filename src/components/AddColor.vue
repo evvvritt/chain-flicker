@@ -13,7 +13,7 @@
       div
         button(v-for="color in tetrad", :style="'background-color:' + color", @click="previewColor = color")
       div
-        button(@click="pickerVisible = !pickerVisible")
+        button.icon-eyedropper(@click="pickerVisible = !pickerVisible")
       .picker-outer.is-overlay(v-show="pickerVisible")
         .is-overlay(@click="pickerVisible = false")
         picker(:value="colors", :disableAlpha="true", @input="update")
@@ -68,41 +68,56 @@ export default {
   > * {
     flex: 1;
   }
-  .preview{
+}
+.preview{
+  display: flex;
+  flex-direction:column;
+  > div{
+    flex:1;
+  }
+}
+.palette{
+  position: relative;
+  background:white;
+  display: flex;
+  flex-direction:column;
+  > div{
+    flex: 1;
     display: flex;
-    flex-direction:column;
-    > div{
-      flex:1;
-    }
+    align-items: stretch;
+  }
+  button{
+    width:calc(100% / 3);
+  }
+  .picker-outer{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background:rgba(0,0,0,.5);
+  }
+}
+.icon-eyedropper{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  &:after{
+    content:'';
+    display: block;
+    background-image:url('../assets/Eyedropper.svg');
+    background-size:contain;
+    background-position:center center;
+    background-repeat:no-repeat;
+    width:6vmax;
+    height:6vmax;
+  }
+}
+
+@media (max-width:480px) {
+  .preview{
+    flex:1 0 25%;
   }
   .palette{
-    position: relative;
-    background:white;
-    display: flex;
-    flex-direction:column;
-    > div{
-      flex: 1;
-      display: flex;
-      align-items: stretch;
-    }
-    button{
-      width:calc(100% / 3);
-    }
-    .picker-outer{
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background:rgba(0,0,0,.5);
-    }
-  }
-
-  @media (max-width:480px) {
-    .preview{
-      flex:1 0 25%;
-    }
-    .palette{
-      flex:1 0 75%;
-    }
+    flex:1 0 75%;
   }
 }
 </style>

@@ -1,5 +1,5 @@
 <template lang="pug">
-  #app
+  #app.app
     router-view(:activeColor="activeColor", @play="play = !play")
     button#add-color-btn.button(v-show="!play", @click="addMode", :style="'background-color:' + colorSet[3]", :class="{'add-color-btn--back': $route.name === 'Add'}")
 </template>
@@ -82,7 +82,7 @@ $frameWidthPortrait: 7vw;
 html{
   background:#1E1E1E;
 }
-#app {
+.app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -100,13 +100,14 @@ html{
     border:none;
     border-radius:0;
     cursor: pointer;
+    background:none;
     &:focus{
       outline:0;
     }
   }
 
   .button{
-    width:5em; height:5em;
+    width:3rem; height:3rem;
     padding:0;
     border-radius:4rem;
     box-shadow:0 2px 4px rgba(0,0,0,.25);
@@ -122,8 +123,8 @@ html{
       background-size:100% auto;
       background-repeat:no-repeat;
       background-position:center center;
-      width:3em;
-      height:3em;
+      width:2rem;
+      height:2rem;
     }
   }
 
@@ -136,7 +137,6 @@ html{
       background-color:transparent !important;
       box-shadow:none;
     }
-    
   }
 
   .screen{
