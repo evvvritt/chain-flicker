@@ -16,7 +16,7 @@ class FlickerFilmContract {
     this.unlocked = false
     this.balanceWei = 0
     this.balance = 0
-    this.address = '0x82EdCB95F8b3C2906101AdbbdB4c61934F47fdF0'
+    this.address = '0xdd6c5d9c917303f465ca2745bd818156aa7a54d3', // 0x82EdCB95F8b3C2906101AdbbdB4c61934F47fdF0'
     this.genesisBlock = 0
     this.loading = false
     this.options = {
@@ -173,7 +173,7 @@ class FlickerFilmContract {
   getColor (index) {
     return this.FlickerFilmContract.methods.getColor(new BN(index, 10)).call()
       .then((resp) => {
-      // console.log(resp)
+      console.log(resp)
       return resp
     }).catch((err) => {
       console.error(err)
