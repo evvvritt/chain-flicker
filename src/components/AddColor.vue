@@ -2,37 +2,45 @@
   .screen
     .preview
       div(:style="'background-color:' + activeColor", @click="previewColor = activeColor")
-      div.preview-color(:style="'background-color:' + previewColor", @click="$emit('addColor', previewColor, 1)")
+      div.preview-color(:style="'background-color:' + previewColor", @click="$emit('addColor', previewColor, quantity)")
     nav.palette
-      div
+      .row
         button(style="background-color:black", @click="previewColor = 'black'")
         button(style="background-color:gray", @click="previewColor = 'gray'")
         button(style="background-color:white", @click="previewColor = 'white'")
-      div
+      .row
         button(v-for="color in analogous", :style="'background-color:' + color", @click="previewColor = color")
-      div
+      .row
         button(v-for="color in tetrad", :style="'background-color:' + color", @click="previewColor = color")
-      div
+      .row
         button.icon-eyedropper(@click="pickerVisible = !pickerVisible")
-      .picker-outer.is-overlay(v-show="pickerVisible")
+        button.quantity-toggle-btn(@click="sliderVisible = true") x{{quantity}}
+      .palette-modal.is-overlay(v-show="pickerVisible")
         .is-overlay(@click="pickerVisible = false")
         picker(:value="{hex: previewColor}", :disableAlpha="true", @input="update")
+      .palette-modal.is-overlay(v-show="sliderVisible")
+        .is-overlay(@click="sliderVisible = false")
+        slider(v-if="sliderVisible", v-model="quantity", direction="vertical", :width="6", height="40%", :min="1", :max="20", :tooltip="false")
 </template>
 
 <script>
 import tinycolor from 'tinycolor2'
 import { Sketch } from 'vue-color'
+import slider from 'vue-slider-component'
 export default {
   name: 'AddColor',
   props: ['activeColor'],
   components: {
-    'picker': Sketch
+    'picker': Sketch,
+    slider
   },
   data () {
     return {
       defaultColor: tinycolor.random().toHexString(),
       previewColor: this.activeColor,
-      pickerVisible: false
+      pickerVisible: false,
+      quantity: 1,
+      sliderVisible: false
     }
   },
   computed: {
@@ -75,20 +83,36 @@ export default {
     flex:1;
   }
 }
+.preview-color{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  &:after{
+    content:'';
+    display: block;
+    background-image:url('../assets/big-plus.svg');
+    background-size:contain;
+    background-position:center center;
+    background-repeat:no-repeat;
+    width:8vmax;
+    height:8vmax;
+    mix-blend-mode:difference;
+  }
+}
 .palette{
   position: relative;
   background:white;
   display: flex;
   flex-direction:column;
-  > div{
+  > .row{
     flex: 1;
     display: flex;
     align-items: stretch;
+    > *{
+      width:calc(100% / 3);
+    }
   }
-  button{
-    width:calc(100% / 3);
-  }
-  .picker-outer{
+  .palette-modal{
     display: flex;
     align-items: center;
     justify-content: center;
@@ -110,21 +134,11 @@ export default {
     height:6vmax;
   }
 }
-.preview-color{
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  &:after{
-    content:'';
-    display: block;
-    background-image:url('../assets/big-plus.svg');
-    background-size:contain;
-    background-position:center center;
-    background-repeat:no-repeat;
-    width:8vmax;
-    height:8vmax;
-    mix-blend-mode:difference;
-  }
+.quantity-toggle-btn{
+  font-size:2em;
+}
+.slider-outer{
+  width:100%;
 }
 
 @media (max-width:480px) {

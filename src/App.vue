@@ -1,7 +1,9 @@
 <template lang="pug">
   #app.app
     router-view(:activeColor="activeColor", @play="play = !play", @addColor="addColor", @changeColor="changeColor")
-    button#add-color-btn.button(v-show="!play", @click="addMode", :style="'background-color:' + btnsColor", :class="{'add-color-btn--back': $route.name === 'Add'}")
+    button#add-color-btn.button(v-show="!play", @click="addMode", :style="'background-color:' + colorSet[3]", :class="{'add-color-btn--back': $route.name === 'Add'}")
+    .loading.is-overlay.flex.flex-center(v-show="loading")
+      div
 </template>
 
 <script>
@@ -17,6 +19,7 @@ export default {
   },
   data () {
     return {
+      loading: false,
       film: [],
       index: 0,
       framesPerSec: 8,
@@ -49,12 +52,9 @@ export default {
     },
     colorSet () {
       if (!this.activeColor || this.play) return false
-      const colors = tinycolor(this.activeColor).tetrad()
+      const color = !this.activeColor ? 'white' : this.activeColor
+      const colors = tinycolor(color).tetrad()
       return colors.map((t) => { return t.toHexString() })
-    },
-    btnsColor () {
-      if (this.colorSet) return this.colorSet[3]
-      return 'white'
     }
   },
   watch: {
@@ -77,12 +77,14 @@ export default {
       this.index = 0 // this.frames.length - 1
     },
     getFilm () {
+      this.loading = true
       return filmContract.getCount().then((count) => {
         let film = []
         for (var i = 0; i < count; i++) {
           filmContract.getColor(i).then((item) => film.push(item))
         }
         this.film = film
+        this.loading = false
         return this.film
       })
     },
@@ -95,8 +97,11 @@ export default {
       return color
     },
     addColor (color, length = 1) {
+      console.log(length)
       const code = this.encodeColor(color, length)
+      console.log(code)
       if (code) {
+        this.loading = true
         return filmContract.addColor(code).then(() => {
           return setTimeout(() => this.getFilm(), 0) // process.env.CALL_DELAY)
         })
@@ -147,7 +152,7 @@ html{
   background:#1E1E1E;
 }
 .app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  font-family: 'Lato', Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   width:100%; height:100vh;
@@ -158,8 +163,18 @@ html{
     top:0; left:0;
     width:100%; height:100%;
   }
+  .flex{
+    display: flex;
+  }
+  .flex-center{
+    align-items: center;
+    justify-content: center;
+  }
 
   button{
+    font-family: inherit;
+    font-weight: inherit;
+    font-style: inherit;
     appearance:none;
     border:none;
     border-radius:0;
@@ -208,6 +223,45 @@ html{
     @include screen($frameWidth);
     border-radius:3rem;
     background-color:white;
+  }
+
+  .loading{
+    position: fixed;
+    z-index:90;
+    > div{
+      width:6rem;
+      height:6rem;
+      background:white;
+      border-radius:100rem;
+      overflow:hidden;
+      position: relative;
+      animation: spin 4s infinite;
+      // filter:blur(3px);
+      box-shadow:0 2px 4px rgba(0,0,0,.25);
+      &:after{
+        content:'';
+        display: block;
+        position: absolute;
+        bottom:0; left:0;
+        width:100%; height:50%;
+        background:black;
+      }
+    }
+  }
+
+  @keyframes spin{
+    0%{
+      transform:rotate(0deg);
+    }
+    33%{
+      transform:rotate(20deg);
+    }
+    66%{
+      transform:rotate(-740deg);
+    }
+    100%{
+      transform:rotate(-720deg);
+    }
   }
 
   @media (orientation:portrait) {

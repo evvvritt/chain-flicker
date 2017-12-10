@@ -234,9 +234,6 @@ class FlickerFilmContract {
    *
    */
 
-
-
-
 }
 
 export default FlickerFilmContract
