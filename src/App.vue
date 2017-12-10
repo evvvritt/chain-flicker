@@ -155,8 +155,12 @@ export default {
       return color
     },
     addColor (color, length = 1) {
+      if (this.readOnly) {
+        this.infoVisible = true
+        return
+      }
       const code = this.encodeColor(color, length)
-      if (code && !this.readOnly) {
+      if (code) {
         this.loader = true
         return filmContract.addColor(code).then(() => {
           return setTimeout(() => this.getFilm(), 0) // process.env.CALL_DELAY)
