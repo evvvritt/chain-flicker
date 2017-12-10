@@ -5,6 +5,8 @@ import Web3 from 'web3'
 const BN = Web3.utils.BN
 import ZeroClientProvider from 'web3-provider-engine/zero.js'
 import IdManagerProvider from '@aeternity/id-manager-provider'
+import Vue from 'vue'
+global.eventBus = new Vue()
 
 class FlickerFilmContract {
   constructor (options) {
@@ -66,11 +68,12 @@ class FlickerFilmContract {
           // revert to a read only version using infura endpoint
         } else {
           this.readOnly = true
+          global.eventBus.$emit('readOnly')
           web3Provider = ZeroClientProvider({
             getAccounts: function(){},
-            rpcUrl: 'https://mainnet.infura.io',
+            // rpcUrl: 'https://mainnet.infura.io',
             // rpcUrl: 'https://testnet.infura.io',
-            // rpcUrl: 'https://rinkeby.infura.io',
+            rpcUrl: 'https://rinkeby.infura.io',
             // rpcUrl: 'https://kovan.infura.io',
           })
         }

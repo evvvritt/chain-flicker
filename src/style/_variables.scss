@@ -1,0 +1,10 @@
+$frameWidth: 7vh;
+$frameWidthPortrait: 7vw;
+@mixin screen ($fw) {
+  top:$fw; left:$fw;
+  width:calc(100% - #{$fw} * 2) ; height:calc(100% - #{$fw} * 2);
+}
+@mixin btnPos ($fw, $side1: 'bottom', $side2: 'right' ) {
+  #{$side1}:calc(#{$fw} + 1.5rem); 
+  #{$side2}:calc(#{$fw} + 1.5rem);
+}

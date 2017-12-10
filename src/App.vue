@@ -14,6 +14,7 @@
         @changeColor="changeColor",
         @incrementFps="incrementFps")
         //- buttons
+        button#info-link.button(@click="infoVisible = !infoVisible", v-show="btnVisible('Info')", :style="'background:' + accents[3]") ?
         button#all-link.button.icon(
         title="View All", 
         v-if="frames.length > 0", 
@@ -32,10 +33,13 @@
         @click="view('Fps')",
         :style="'background-color:' + accents[3]",
         :class="{'button--close': $route.name === 'Fps'}")
+    //- modals
+    modal(v-show="infoVisible", @click="infoVisible = false", :background="accents[3]", text=`<p>Hi&nbsp; :-)</p><p>"What is this?"</p><p>This is a decentralized app (dApp) inspired by the flicker films of the late artist Paul&nbsp;Sharits.</p><p>The film is hosted on the Ethereum Blockchain. You can add colors by using an identity manager like <a href='https://aepps.com' target='_blank' rel='noopener'>Aepps.com's</a> or <a href='https://metamask.io/' target='_blank' rell='noopener'>Meta Mask</a>, while on the Rinkeby Test Network.</p><p><a href='https://github.com/evvvritt/flicker-chain' target="_blank" rel="noopener">GitHub</a></p>`, @close="infoVisible = false")
 </template>
 
 <script>
 import Loader from '@/components/Loader'
+import Modal from '@/components/Modal'
 // utils
 import Web3Utils from 'web3-utils'
 import tinycolor from 'tinycolor2'
@@ -44,10 +48,12 @@ let filmContract = new FlickerFilmContract()
 export default {
   name: 'app',
   components: {
-    Loader
+    Loader,
+    Modal
   },
   data () {
     return {
+      readOnly: false,
       loading: true,
       loader: true,
       filmCount: 0,
@@ -56,7 +62,8 @@ export default {
       index: 0,
       framesPerSec: 8,
       interval: null,
-      play: false
+      play: false,
+      infoVisible: false
     }
   },
   computed: {
@@ -96,7 +103,7 @@ export default {
       return this.$router.push({name: name})
     },
     btnVisible (name) {
-      return this.$route.meta.buttons.indexOf(name) > -1 && !this.play
+      return this.$route.meta.buttons.indexOf(name) > -1 && !this.play && !this.infoVisible
     },
     updateIndex (index) {
       this.index = index
@@ -149,7 +156,7 @@ export default {
     },
     addColor (color, length = 1) {
       const code = this.encodeColor(color, length)
-      if (code) {
+      if (code && !this.readOnly) {
         this.loader = true
         return filmContract.addColor(code).then(() => {
           return setTimeout(() => this.getFilm(), 0) // process.env.CALL_DELAY)
@@ -157,7 +164,7 @@ export default {
       }
     },
     changeColor (index = -1, color, length) {
-      if (index < 0) return false
+      if (this.readOnly || index < 0) return false
       const code = this.encodeColor(color, length)
       if (code) {
         return filmContract.changeColor(code, index).then(() => {
@@ -166,6 +173,12 @@ export default {
       }
     },
     init () {
+      // watch for read only
+      window.eventBus.$on('readOnly', () => {
+        console.log('read only')
+        this.readOnly = true
+      })
+      // get film after contract is constructed
       const ready = setInterval(() => {
         if (filmContract.FlickerFilmContract) {
           clearInterval(ready)
@@ -181,16 +194,7 @@ export default {
 </script>
 
 <style lang="scss">
-$frameWidth: 7vh;
-$frameWidthPortrait: 7vw;
-@mixin screen ($fw) {
-  top:$fw; left:$fw;
-  width:calc(100% - #{$fw} * 2) ; height:calc(100% - #{$fw} * 2);
-}
-@mixin btnPos ($fw, $side1: 'bottom', $side2: 'right' ) {
-  #{$side1}:calc(#{$fw} + 1.5rem); 
-  #{$side2}:calc(#{$fw} + 1.5rem);
-}
+@import './style/variables';
 
 *{
   margin:0;
@@ -202,7 +206,7 @@ html{
 }
 .app {
   font-family: 'Lato', Helvetica, Arial, sans-serif;
-  font-weight: 100;
+  font-weight: 300;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   width:100%; height:100vh;
@@ -227,6 +231,12 @@ html{
     }
     &.body-enter{
       opacity:0;
+    }
+  }
+
+  a{
+    &, &:link, &:visited{
+      color:inherit;
     }
   }
 
@@ -274,6 +284,12 @@ html{
     }
   }
 
+  #info-link{
+    position: fixed;
+    @include btnPos($frameWidth, 'top', 'left');
+    font-size:2rem;
+  }
+
   #add-link{
     position: fixed;
     @include btnPos($frameWidth);
@@ -317,9 +333,7 @@ html{
     @include screen($frameWidth);
     border-radius:3rem;
     background-color:white;
-  }
-
-  
+  }  
 
   @media (orientation:portrait) {
     .screen{
@@ -333,6 +347,9 @@ html{
     }
     #all-link{
       @include btnPos($frameWidthPortrait, 'top', 'right');
+    }
+    #info-link{
+      @include btnPos($frameWidthPortrait, 'top', 'left');
     }
   }
 }

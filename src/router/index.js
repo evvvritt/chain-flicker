@@ -14,7 +14,7 @@ export default new Router({
       name: 'Player',
       component: Player,
       meta: {
-        buttons: ['All', 'Add', 'Fps']
+        buttons: ['All', 'Add', 'Fps', 'Info']
       }
     },
     {
@@ -30,7 +30,7 @@ export default new Router({
       name: 'All',
       component: All,
       meta: {
-        buttons: ['All', 'Add', 'Fps']
+        buttons: ['All', 'Add']
       }
     },
     {
