@@ -3,9 +3,34 @@
     loader(v-show="loader")
     transition(name="body", appear)
       .app__body(v-show="!loading")
-        router-view(:frames="frames", :activeColor="activeColor", @play="play = !play", @addColor="addColor", @changeColor="changeColor")
-        button#all-link.button(title="View All", v-if="frames.length > 0", v-show="!play", @click="allBtnClick", :style="'background-color:' + colorSet[3]")
-        button#add-color-btn.button(v-show="!play", @click="addMode", :style="'background-color:' + colorSet[3]", :class="{'add-color-btn--back': $route.name === 'Add'}")
+        router-view(
+        :frames="frames", 
+        :framesPerSec="framesPerSec",
+        :accents="accents", 
+        :activeColor="activeColor", 
+        @play="play = !play", 
+        @addColor="addColor", 
+        @changeColor="changeColor",
+        @incrementFps="incrementFps")
+        //- buttons
+        button#all-link.button.icon(
+        title="View All", 
+        v-if="frames.length > 0", 
+        v-show="btnVisible('All')", 
+        @click="view('All')", 
+        :style="'background-color:' + accents[3]")
+        button#add-link.button.icon(
+        v-show="btnVisible('Add')", 
+        @click="view('Add')", 
+        :style="'background-color:' + accents[3]", 
+        :class="{'button--close': $route.name === 'Add'}")
+        button#fps-link.button.icon(
+        title="Edit Frame Rate", 
+        v-if="frames.length > 0",
+        v-show="btnVisible('Fps')",  
+        @click="view('Fps')",
+        :style="'background-color:' + accents[3]",
+        :class="{'button--close': $route.name === 'Fps'}")
 </template>
 
 <script>
@@ -43,7 +68,7 @@ export default {
     lastColor () {
       return this.frames[this.film.length - 1]
     },
-    colorSet () {
+    accents () {
       if (!this.activeColor || this.play) return false
       const color = !this.activeColor ? 'white' : this.activeColor
       const colors = tinycolor(color).tetrad()
@@ -65,13 +90,15 @@ export default {
     resetIndex () {
       this.index = 0 // this.frames.length - 1
     },
-    addMode () {
-      if (this.$route.name === 'Add') return this.$router.go(-1)
-      return this.$router.push({name: 'Add'})
+    view (name) {
+      if (this.$route.name === name) return this.$router.go(-1)
+      return this.$router.push({name: name})
     },
-    allBtnClick () {
-      if (this.$route.name === 'All') return this.$router.go(-1)
-      return this.$router.push({name: 'All'})
+    btnVisible (name) {
+      return this.$route.meta.buttons.indexOf(name) > -1 && !this.play
+    },
+    incrementFps (value = 1) {
+      this.framesPerSec = this.framesPerSec + value < 0 ? 0 : this.framesPerSec + value
     },
     getFilm () {
       this.loader = true
@@ -171,6 +198,7 @@ html{
 }
 .app {
   font-family: 'Lato', Helvetica, Arial, sans-serif;
+  font-weight: 100;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   width:100%; height:100vh;
@@ -222,6 +250,17 @@ html{
     align-items: center;
     transition:all 300ms;
     transform-origin:center center;
+    &.button--close{
+      transform:rotate(-135deg);
+      background-color:transparent !important;
+      box-shadow:none;
+      &:after{
+        background-image:url('./assets/add-btn__plus.svg');
+      }
+    }
+  }
+
+  .icon{
     &:after{
       content:'';
       display:block;
@@ -231,7 +270,7 @@ html{
     }
   }
 
-  #add-color-btn{
+  #add-link{
     position: fixed;
     @include btnPos($frameWidth);
     &:after{
@@ -239,11 +278,6 @@ html{
       width:2rem;
       height:2rem;
     }
-  }
-  &[data-route="Add"] #add-color-btn{
-    transform:rotate(-135deg);
-    background-color:transparent !important;
-    box-shadow:none;
   }
 
   #all-link{
@@ -258,8 +292,20 @@ html{
   &[data-route="All"] #all-link{
     transform:rotate(90deg);
   }
-  &[data-route="Add"] #all-link{
-    display:none;
+
+  #fps-link{
+    position: fixed;
+    @include btnPos($frameWidth, 'bottom', 'left');
+    &:after{
+      width:2.25rem;
+      height:2.25rem;
+    }
+    &:not(.button--close):after{
+      background-image:url('./assets/Stopwatch.svg');
+    }
+    &.button--close{
+      transform:rotate(45deg);
+    }
   }
 
   .screen{
@@ -275,7 +321,7 @@ html{
     .screen{
       @include screen($frameWidthPortrait);
     }
-    #add-color-btn{
+    #add-link{
       @include btnPos($frameWidthPortrait);
     }
   }

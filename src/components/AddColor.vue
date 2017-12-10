@@ -136,6 +136,7 @@ export default {
 }
 .quantity-toggle-btn{
   font-size:2em;
+  font-weight: bolder;
 }
 .slider-outer{
   width:100%;
