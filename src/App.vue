@@ -1,6 +1,6 @@
 <template lang="pug">
   #app.app(:data-route="$route.name")
-    loader(v-show="loader")
+    loader(v-show="loader", @click="loader = false")
     transition(name="body", appear)
       .app__body(v-show="!loading")
         router-view(
@@ -8,7 +8,8 @@
         :framesPerSec="framesPerSec",
         :accents="accents", 
         :activeColor="activeColor", 
-        @play="play = !play", 
+        @play="play = !play",
+        @updateIndex="updateIndex", 
         @addColor="addColor", 
         @changeColor="changeColor",
         @incrementFps="incrementFps")
@@ -66,7 +67,7 @@ export default {
       return this.frames[this.index]
     },
     lastColor () {
-      return this.frames[this.film.length - 1]
+      return this.frames[this.frames.length - 1]
     },
     accents () {
       if (!this.activeColor || this.play) return false
@@ -96,6 +97,9 @@ export default {
     },
     btnVisible (name) {
       return this.$route.meta.buttons.indexOf(name) > -1 && !this.play
+    },
+    updateIndex (index) {
+      this.index = index
     },
     incrementFps (value = 1) {
       this.framesPerSec = this.framesPerSec + value < 0 ? 0 : this.framesPerSec + value
@@ -323,6 +327,12 @@ html{
     }
     #add-link{
       @include btnPos($frameWidthPortrait);
+    }
+    #fps-link{
+      @include btnPos($frameWidthPortrait, 'left', 'bottom'); 
+    }
+    #all-link{
+      @include btnPos($frameWidthPortrait, 'top', 'right');
     }
   }
 }
