@@ -1,13 +1,16 @@
 <template lang="pug">
-  #app.app
-    router-view(:activeColor="activeColor", @play="play = !play", @addColor="addColor", @changeColor="changeColor")
-    button#add-color-btn.button(v-show="!play", @click="addMode", :style="'background-color:' + colorSet[3]", :class="{'add-color-btn--back': $route.name === 'Add'}")
-    .loading.is-overlay.flex.flex-center(v-show="loading")
-      div
+  #app.app(:data-route="$route.name")
+    loader(v-show="loader")
+    transition(name="body", appear)
+      .app__body(v-show="!loading")
+        router-view(:frames="frames", :activeColor="activeColor", @play="play = !play", @addColor="addColor", @changeColor="changeColor")
+        button#all-link.button(title="View All", v-if="frames.length > 0", v-show="!play", @click="allBtnClick", :style="'background-color:' + colorSet[3]")
+        button#add-color-btn.button(v-show="!play", @click="addMode", :style="'background-color:' + colorSet[3]", :class="{'add-color-btn--back': $route.name === 'Add'}")
 </template>
 
 <script>
-import AddColor from '@/components/AddColor'
+import Loader from '@/components/Loader'
+// utils
 import Web3Utils from 'web3-utils'
 import tinycolor from 'tinycolor2'
 import FlickerFilmContract from '../dapp-scratch-wrapper/FlickerFilmContract'
@@ -15,12 +18,15 @@ let filmContract = new FlickerFilmContract()
 export default {
   name: 'app',
   components: {
-    AddColor
+    Loader
   },
   data () {
     return {
-      loading: false,
+      loading: true,
+      loader: true,
+      filmCount: 0,
       film: [],
+      frames: [],
       index: 0,
       framesPerSec: 8,
       interval: null,
@@ -28,19 +34,6 @@ export default {
     }
   },
   computed: {
-    frames () {
-      let frames = []
-      for (var i = 0; i < this.film.length; i++) {
-        const item = this.film[i].replace('0x', '')
-        const color = '#' + item.substring(0, 6)
-        const length = Web3Utils.hexToNumber(item.substring(6))
-        for (var x = 0; x < length; x++) {
-          frames.push(color)
-        }
-      }
-      frames.reverse()
-      return frames
-    },
     speed () {
       return Math.floor(1000 / this.framesPerSec)
     },
@@ -69,23 +62,50 @@ export default {
     }
   },
   methods: {
+    resetIndex () {
+      this.index = 0 // this.frames.length - 1
+    },
     addMode () {
       if (this.$route.name === 'Add') return this.$router.go(-1)
       return this.$router.push({name: 'Add'})
     },
-    resetIndex () {
-      this.index = 0 // this.frames.length - 1
+    allBtnClick () {
+      if (this.$route.name === 'All') return this.$router.go(-1)
+      return this.$router.push({name: 'All'})
     },
     getFilm () {
-      this.loading = true
+      this.loader = true
       return filmContract.getCount().then((count) => {
-        let film = []
-        for (var i = 0; i < count; i++) {
-          filmContract.getColor(i).then((item) => film.push(item))
+        this.getColor(0, parseInt(count))
+        return count
+      })
+    },
+    setFrames () {
+      let frames = []
+      for (var i = 0; i < this.film.length; i++) {
+        const item = this.film[i].replace('0x', '')
+        const color = '#' + item.substring(0, 6)
+        const length = Web3Utils.hexToNumber(item.substring(6))
+        for (var x = 0; x < length; x++) {
+          frames.push(color)
         }
-        this.film = film
+      }
+      frames.reverse()
+      this.frames = frames
+    },
+    getColor (index = 0, length = 0) {
+      // exit
+      if (index === length) {
+        this.setFrames()
         this.loading = false
-        return this.film
+        this.loader = false
+        return
+      }
+      // recursive
+      filmContract.getColor(index).then((item) => {
+        this.film.push(item)
+        this.getColor(index + 1, length)
+        return item
       })
     },
     encodeColor (color, length) {
@@ -97,11 +117,9 @@ export default {
       return color
     },
     addColor (color, length = 1) {
-      console.log(length)
       const code = this.encodeColor(color, length)
-      console.log(code)
       if (code) {
-        this.loading = true
+        this.loader = true
         return filmContract.addColor(code).then(() => {
           return setTimeout(() => this.getFilm(), 0) // process.env.CALL_DELAY)
         })
@@ -138,9 +156,9 @@ $frameWidthPortrait: 7vw;
   top:$fw; left:$fw;
   width:calc(100% - #{$fw} * 2) ; height:calc(100% - #{$fw} * 2);
 }
-@mixin btnPos ($fw) {
-  bottom:calc(#{$fw} + 1.5rem); 
-  right:calc(#{$fw} + 1.5rem);
+@mixin btnPos ($fw, $side1: 'bottom', $side2: 'right' ) {
+  #{$side1}:calc(#{$fw} + 1.5rem); 
+  #{$side2}:calc(#{$fw} + 1.5rem);
 }
 
 *{
@@ -171,6 +189,15 @@ html{
     justify-content: center;
   }
 
+  .app__body{
+    &.body-enter-active{
+      transition: opacity 1s;
+    }
+    &.body-enter{
+      opacity:0;
+    }
+  }
+
   button{
     font-family: inherit;
     font-weight: inherit;
@@ -198,24 +225,41 @@ html{
     &:after{
       content:'';
       display:block;
-      background-image:url('./assets/add-btn__plus.svg');
       background-size:100% auto;
       background-repeat:no-repeat;
       background-position:center center;
-      width:2rem;
-      height:2rem;
     }
   }
 
   #add-color-btn{
     position: fixed;
     @include btnPos($frameWidth);
-    
-    &.add-color-btn--back{
-      transform:rotate(-135deg);
-      background-color:transparent !important;
-      box-shadow:none;
+    &:after{
+      background-image:url('./assets/add-btn__plus.svg');
+      width:2rem;
+      height:2rem;
     }
+  }
+  &[data-route="Add"] #add-color-btn{
+    transform:rotate(-135deg);
+    background-color:transparent !important;
+    box-shadow:none;
+  }
+
+  #all-link{
+    position: fixed;
+    @include btnPos($frameWidth, 'top', 'right');
+    &:after{
+      background-image:url('./assets/Eye.svg');
+      width:2.25rem;
+      height:2.25rem;
+    }
+  }
+  &[data-route="All"] #all-link{
+    transform:rotate(90deg);
+  }
+  &[data-route="Add"] #all-link{
+    display:none;
   }
 
   .screen{
@@ -225,44 +269,7 @@ html{
     background-color:white;
   }
 
-  .loading{
-    position: fixed;
-    z-index:90;
-    > div{
-      width:6rem;
-      height:6rem;
-      background:white;
-      border-radius:100rem;
-      overflow:hidden;
-      position: relative;
-      animation: spin 4s infinite;
-      // filter:blur(3px);
-      box-shadow:0 2px 4px rgba(0,0,0,.25);
-      &:after{
-        content:'';
-        display: block;
-        position: absolute;
-        bottom:0; left:0;
-        width:100%; height:50%;
-        background:black;
-      }
-    }
-  }
-
-  @keyframes spin{
-    0%{
-      transform:rotate(0deg);
-    }
-    33%{
-      transform:rotate(20deg);
-    }
-    66%{
-      transform:rotate(-740deg);
-    }
-    100%{
-      transform:rotate(-720deg);
-    }
-  }
+  
 
   @media (orientation:portrait) {
     .screen{
