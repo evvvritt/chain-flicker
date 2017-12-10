@@ -27,15 +27,16 @@ section{
   margin:44vh auto;
   border-radius:1rem;
   overflow:hidden;
+  // filter:blur(2px);
   > div {
     margin:0 auto;
-    width:12vw;
+    width:10vw;
     cursor: pointer;
     border-radius:.5rem;
     &:after{
       content:'';
       display: block;
-      padding-bottom:12vh;
+      padding-bottom:10vh;
     }
     &:nth-last-child(n + 2) {
       // border-bottom: 1px solid rgba(0,0,0,.5);  

@@ -3,6 +3,7 @@
     .preview
       div(:style="'background-color:' + activeColor", @click="previewColor = activeColor")
       div.preview-color(:style="'background-color:' + previewColor", @click="$emit('addColor', previewColor, quantity)")
+        button.quantity-toggle-btn(@click.stop="sliderVisible = !sliderVisible") {{quantity}}
     nav.palette
       .row
         button(style="background-color:black", @click="previewColor = 'black'")
@@ -14,7 +15,6 @@
         button(v-for="color in tetrad", :style="'background-color:' + color", @click="previewColor = color")
       .row
         button.icon-eyedropper(@click="pickerVisible = !pickerVisible")
-        button.quantity-toggle-btn(@click="sliderVisible = true") x{{quantity}}
       .palette-modal.is-overlay(v-show="pickerVisible")
         .is-overlay(@click="pickerVisible = false")
         picker(:value="{hex: previewColor}", :disableAlpha="true", @input="update")
@@ -84,6 +84,7 @@ export default {
   }
 }
 .preview-color{
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -101,7 +102,7 @@ export default {
 }
 .palette{
   position: relative;
-  background:white;
+  // background:white;
   display: flex;
   flex-direction:column;
   > .row{
@@ -116,7 +117,7 @@ export default {
     display: flex;
     align-items: center;
     justify-content: center;
-    background:rgba(0,0,0,.5);
+    background:rgba(0,0,0,.75);
   }
 }
 .icon-eyedropper{
@@ -135,6 +136,10 @@ export default {
   }
 }
 .quantity-toggle-btn{
+  position: absolute;
+  bottom:0;
+  right:0;
+  padding:2rem;
   font-size:2em;
   font-weight: bolder;
 }
