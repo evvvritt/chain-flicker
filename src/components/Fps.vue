@@ -1,12 +1,12 @@
 <template lang="pug">
-  .screen(:style="'background-color:' + accents[2]")
+  .screen(:style="'background-color:' + accents[0]")
     div.flex.flex-center
       span {{framesPerSec}} <span>FPS</span>
     nav(:style="'background:' + accents[3]")
       button.icon(aria-label="Increase Frame Rate", @click="$emit('incrementFps')")
-        .is-overlay(:style="'background:' + accents[0]")
+        .is-overlay(:style="'background:' + accents[2]")
       button.icon(aria-label="Deccrease Frame Rate", @click="$emit('incrementFps', -1)")
-        .is-overlay(:style="'background:' + accents[0]")
+        .is-overlay(:style="'background:' + accents[2]")
 </template>
 
 <script>
