@@ -2,9 +2,11 @@
 import FlickerFilmContractArtifacts from '../../build/contracts/FlickerFilmContract.json'
 
 import Web3 from 'web3'
-const BN = Web3.utils.BN
 import ZeroClientProvider from 'web3-provider-engine/zero.js'
 import IdManagerProvider from '@aeternity/id-manager-provider'
+import contract from '../../build/contracts/FlickerFilmContract.json'
+const BN = Web3.utils.BN
+// event emitter
 import Vue from 'vue'
 global.eventBus = new Vue()
 
@@ -18,7 +20,7 @@ class FlickerFilmContract {
     this.unlocked = false
     this.balanceWei = 0
     this.balance = 0
-    this.address = '0xdd6c5d9c917303f465ca2745bd818156aa7a54d3', // 0x82EdCB95F8b3C2906101AdbbdB4c61934F47fdF0'
+    this.address = null, // '0xdd6c5d9c917303f465ca2745bd818156aa7a54d3', // 0x82EdCB95F8b3C2906101AdbbdB4c61934F47fdF0'
     this.genesisBlock = 0
     this.loading = false
     this.options = {
@@ -118,6 +120,12 @@ class FlickerFilmContract {
       if (err) console.error(err)
       if (!err && this.network !== netId) {
         this.network = netId
+        const network = contract.networks[this.network]
+        this.address = !network ? contract.networks['4'].address : network.address
+        if (!network) {
+          this.readOnly = true
+          global.eventBus.$emit('readOnly')
+        }
         return this.deployContract()
       }
     })
