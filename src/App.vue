@@ -35,11 +35,14 @@
         :class="{'button--close': $route.name === 'Fps'}")
     //- modals
     modal(v-show="infoVisible", @click="infoVisible = false", :background="accents[3]", text=`<p>Hi&nbsp; :-)</p><p>"What is this?"</p><p>This is a decentralized app (dApp) inspired by the flicker films of the late artist Paul&nbsp;Sharits.</p><p>The film is hosted on the Ethereum Blockchain. You can add colors by using an identity manager like <a href='https://aepps.com' target='_blank' rel='noopener'>Aepps.com's</a> or <a href='https://metamask.io/' target='_blank' rell='noopener'>Meta Mask</a>, while on the Rinkeby Test Network.</p><p><a href='https://github.com/evvvritt/flicker-chain' target="_blank" rel="noopener">GitHub</a></p>`, @close="infoVisible = false")
+    //-
+    noise(:activeColor="activeColor", :isPlaying="play")
 </template>
 
 <script>
 import Loader from '@/components/Loader'
 import Modal from '@/components/Modal'
+import Noise from '@/components/Noise'
 // utils
 import Web3Utils from 'web3-utils'
 import tinycolor from 'tinycolor2'
@@ -49,7 +52,8 @@ export default {
   name: 'app',
   components: {
     Loader,
-    Modal
+    Modal,
+    Noise
   },
   data () {
     return {

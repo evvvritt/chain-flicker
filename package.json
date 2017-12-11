@@ -15,6 +15,7 @@
   },
   "dependencies": {
     "@aeternity/id-manager-provider": "github:aeternity/id-manager-provider",
+    "lodash": "^4.17.4",
     "tinycolor2": "^1.4.1",
     "vue": "^2.5.2",
     "vue-color": "^2.4.3",
