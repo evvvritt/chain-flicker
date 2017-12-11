@@ -2,11 +2,9 @@
   .screen(:style="'background-color:' + accents[0]")
     div.flex.flex-center
       span {{framesPerSec}} <span>FPS</span>
-    nav(:style="'background:' + accents[3]")
-      button.icon(aria-label="Increase Frame Rate", @click="$emit('incrementFps')")
-        .is-overlay(:style="'background:' + accents[2]")
-      button.icon(aria-label="Deccrease Frame Rate", @click="$emit('incrementFps', -1)")
-        .is-overlay(:style="'background:' + accents[2]")
+    nav(:style="'background:' + accents[2]")
+      button.icon(aria-label="Increase Frame Rate", @click="$emit('incrementFps')", :style="'background:' + accents[3]")
+      button.icon(aria-label="Deccrease Frame Rate", @click="$emit('incrementFps', -1)", :style="'background:' + accents[3]")
 </template>
 
 <script>
@@ -56,21 +54,15 @@ nav{
     background-image:url('../assets/add-btn__plus.svg');
     width:2rem;
     height:2rem;
-    z-index:1;
+    z-index:10;
   }
   &:last-child{
     &:after{
       background-image:url('../assets/Minus.svg');  
     }
   }
-  .is-overlay{
-    visibility: hidden;
-    z-index:0;
-  }
   &:active{
-    .is-overlay{
-      visibility: visible;
-    }
+    background:transparent !important;
   }
 }
 
