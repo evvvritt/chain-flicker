@@ -1,6 +1,6 @@
 <template lang="pug">
   .screen(:style="'background-color:' + accents[0]")
-    div.flex.flex-center
+    div.flex.flex-center(@click="$router.go(-1)")
       span {{framesPerSec}} <span>FPS</span>
     nav(:style="'background:' + accents[2]")
       button.icon(aria-label="Increase Frame Rate", @click="$emit('incrementFps')", :style="'background:' + accents[3]")

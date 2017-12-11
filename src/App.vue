@@ -34,7 +34,7 @@
         :style="'background-color:' + accents[3]",
         :class="{'button--close': $route.name === 'Fps'}")
     //- modals
-    modal(v-show="infoVisible", @click="infoVisible = false", :background="accents[3]", text=`<p>Hi&nbsp; :-)</p><p>"What is this?"</p><p>This is a decentralized app (dApp) inspired by the flicker films of the late artist Paul&nbsp;Sharits.</p><p>The film is hosted on the Ethereum Blockchain. You can add colors by using an identity manager like <a href='https://aepps.com' target='_blank' rel='noopener'>Aepps.com's</a> or <a href='https://metamask.io/' target='_blank' rell='noopener'>Meta Mask</a>, while on the Rinkeby Test Network.</p><p><a href='https://github.com/evvvritt/flicker-chain' target="_blank" rel="noopener">GitHub</a></p>`, @close="infoVisible = false")
+    modal(v-show="infoVisible", @click="infoVisible = false", :background="accents[1]", text=`<p>Hi&nbsp; :-)</p><p>"What is this?"</p><p>This is a decentralized app (dApp) inspired by the flicker films of the late artist Paul&nbsp;Sharits.</p><p>The film is hosted on the Ethereum Blockchain. You can add colors by using an identity manager like <a href='https://aepps.com' target='_blank' rel='noopener'>Aepps.com's</a> or <a href='https://metamask.io/' target='_blank' rell='noopener'>Meta Mask</a>, while on the Rinkeby or Kovan Test Networks.</p><p><a href='https://github.com/evvvritt/flicker-chain' target="_blank" rel="noopener">GitHub</a></p>`, @close="infoVisible = false")
 </template>
 
 <script>
@@ -56,7 +56,6 @@ export default {
       readOnly: false,
       loading: true,
       loader: true,
-      filmCount: 0,
       film: [],
       frames: [],
       index: 0,
@@ -114,6 +113,7 @@ export default {
     getFilm () {
       this.loader = true
       return filmContract.getCount().then((count) => {
+        this.film = []
         this.getColor(0, parseInt(count))
         return count
       })

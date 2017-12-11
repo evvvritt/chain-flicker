@@ -31,6 +31,7 @@ export default {
 
     > section{
       position: relative;
+      background-color:white; // default
       border-radius:2.5rem;
       @include screen($frameWidth);
       top: auto; left:auto;
