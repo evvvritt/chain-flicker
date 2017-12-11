@@ -207,7 +207,7 @@ class FlickerFilmContract {
    */
 
   addColor (colorAndLength) {
-    if (!this.account) return new Error('Unlock Wallet')
+    if (!this.account) return Promise.reject(new Error('Unlock Wallet'))
     return this.FlickerFilmContract.methods.addColor(colorAndLength).send({from: this.account})
     .on('transactionHash', (hash) => {
       console.log(hash)
@@ -223,7 +223,7 @@ class FlickerFilmContract {
     })
   }
   changeColor (colorAndLength, index) {
-    if (!this.account) return new Error('Unlock Wallet')
+    if (!this.account) return Promise.reject(new Error('Unlock Wallet'))
     return this.FlickerFilmContract.methods.changeColor(colorAndLength, new BN(index, 10)).send({from: this.account})
     .on('transactionHash', (hash) => {
       console.log(hash)

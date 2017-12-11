@@ -164,6 +164,10 @@ export default {
         this.loader = true
         return filmContract.addColor(code).then(() => {
           return setTimeout(() => this.getFilm(), 0) // process.env.CALL_DELAY)
+        }).catch((err) => {
+          this.loader = false
+          this.infoVisible = true
+          console.error(err)
         })
       }
     },
@@ -171,8 +175,13 @@ export default {
       if (this.readOnly || index < 0) return false
       const code = this.encodeColor(color, length)
       if (code) {
+        this.loader = true
         return filmContract.changeColor(code, index).then(() => {
           return this.getFilm()
+        }).catch((err) => {
+          this.loader = false
+          this.infoVisible = true
+          console.error(err)
         })
       }
     },
