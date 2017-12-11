@@ -14,7 +14,7 @@
         @changeColor="changeColor",
         @incrementFps="incrementFps")
         //- buttons
-        button#info-link.button(@click="infoVisible = !infoVisible", v-show="btnVisible('Info')", :style="'background:' + accents[3]") ?
+        button#info-link.button(@click="infoVisible = !infoVisible", v-show="btnVisible('Info')", :style="'background:' + accents[3]") i
         button#all-link.button.icon(
         title="View All", 
         v-if="frames.length > 0", 

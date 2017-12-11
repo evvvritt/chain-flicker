@@ -35,7 +35,9 @@ export default {
     padding: 4vmax;
     @include screen($frameWidth);
     top: auto; left:auto;
+    // scrolling
     overflow-y:scroll;
+    -webkit-overflow-scrolling: touch;
     &::-webkit-scrollbar { 
       display: none; 
     }
