@@ -24,7 +24,8 @@ export default {
 <style lang="scss" scoped>
 section{
   // width:6rem;
-  margin:44vh auto;
+  margin:0 auto;
+  padding:44vh 0;
   border-radius:1rem;
   overflow:hidden;
   // filter:blur(2px);
