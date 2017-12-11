@@ -39,7 +39,7 @@ nav{
   > * {
     flex:1 0 auto;
     &:nth-last-child(n + 2) {
-      border-bottom:1px solid black;
+      // border-bottom:1px solid black;
     }
   }
 }

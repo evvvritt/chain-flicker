@@ -136,6 +136,8 @@ export default {
   }
 }
 .quantity-toggle-btn{
+  color:gray;
+  mix-blend-mode:difference;
   position: absolute;
   bottom:0;
   right:0;
