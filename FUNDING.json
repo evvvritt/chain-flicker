@@ -1,7 +1,7 @@
 {
   "drips": {
-    "ethereum": {
-      "ownedBy": "0x8fAcf07E6101ed99986C2FA5d594354b776c7088"
+    "goerli": {
+      "ownedBy": "0x60FC49f9639468e892359Ad8D2B95F31c6E85736"
     }
   }
 }
